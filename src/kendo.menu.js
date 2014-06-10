@@ -1170,7 +1170,7 @@ var __meta__ = {
             Menu.fn.destroy.call(that);
 
             that.target.off(that.showOn + NS, that._showProxy);
-            DOCUMENT_ELEMENT.on(MOUSEDOWN + NS, that._closeProxy);
+            DOCUMENT_ELEMENT.off(kendo.support.mousedown + NS, that._closeProxy);
 
             if (that.popup) {
                 kendo.destroy(that.popup.wrapper);
@@ -1194,7 +1194,7 @@ var __meta__ = {
 
             DOCUMENT_ELEMENT.off(MOUSEDOWN, that.popup._mousedownProxy);
             DOCUMENT_ELEMENT
-                .on(MOUSEDOWN + NS, that._closeProxy);
+                .on(kendo.support.mousedown + NS, that._closeProxy);
         },
 
         _showHandler: function (e) {
@@ -1216,9 +1216,9 @@ var __meta__ = {
         _closeHandler: function (e) {
             var that = this;
 
-            DOCUMENT_ELEMENT.off(MOUSEDOWN + NS, that._closeProxy);
-
             if (that.popup.visible() && e.which !== 3) {
+                DOCUMENT_ELEMENT.off(kendo.support.mousedown + NS, that._closeProxy);
+
                 that.popup.close();
             }
         },
@@ -1233,9 +1233,9 @@ var __meta__ = {
 
             if (target) {
                 if (options.filter) {
-                    $(target).on(options.showOn + NS, that._showProxy);
-                } else {
                     $(target).on(options.showOn + NS, options.filter, that._showProxy);
+                } else {
+                    $(target).on(options.showOn + NS, that._showProxy);
                 }
             }
         },
