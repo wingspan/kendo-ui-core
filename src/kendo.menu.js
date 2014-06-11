@@ -1198,17 +1198,24 @@ var __meta__ = {
         },
 
         _showHandler: function (e) {
+            var ev = e;
+            if (e.event) {
+                ev = e.event;
+                ev.pageX = e.x.location;
+                ev.pageY = e.y.location;
+            }
+
             var that = this,
                 options = that.options;
 
-            e.preventDefault();
-            e.stopImmediatePropagation();
+            ev.preventDefault();
+            ev.stopImmediatePropagation();
 
-            if ((options.filter && kendo.support.matchesSelector.call(e.target, options.filter)) || !options.filter) {
+            if ((options.filter && kendo.support.matchesSelector.call(ev.target, options.filter)) || !options.filter) {
                 if (options.alignToAnchor) {
-                    that.show(e.target);
+                    that.show(ev.target);
                 } else {
-                    that.show(e.pageX, e.pageY);
+                    that.show(ev.pageX, ev.pageY);
                 }
             }
         },
@@ -1232,10 +1239,20 @@ var __meta__ = {
             that._closeProxy = proxy(that._closeHandler, that);
 
             if (target) {
-                if (options.filter) {
-                    $(target).on(options.showOn + NS, options.filter, that._showProxy);
+                if (kendo.support.mobileOS && options.showOn == "contextmenu") {
+                    that.events = new kendo.UserEvents(target, {
+                        filter: options.filter,
+                        allowSelection: false
+                    });
+
+                    $(target).on(options.showOn + NS, false);
+                    that.events.bind("hold", that._showProxy);
                 } else {
-                    $(target).on(options.showOn + NS, that._showProxy);
+                    if (options.filter) {
+                        $(target).on(options.showOn + NS, options.filter, that._showProxy);
+                    } else {
+                        $(target).on(options.showOn + NS, that._showProxy);
+                    }
                 }
             }
         },
